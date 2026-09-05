@@ -10,12 +10,10 @@ cask "coursework" do
 
   app "Coursework.app"
 
-  # The app is unsigned (no Developer ID). Homebrew 6 removed --no-quarantine
-  # and always sets com.apple.quarantine, which makes macOS mark unsigned
-  # quarantined apps as "damaged" on launch. Strip it post-install so the
-  # single install command works. Remove this once the app is signed+notarized.
-  postflight do
-    system_command "/usr/bin/xattr",
-                   args: ["-dr", "com.apple.quarantine", "#{appdir}/Coursework.app"]
-  end
+  # NOTE: the app is unsigned (no Developer ID), and Homebrew 6 removed
+  # --no-quarantine and always sets com.apple.quarantine — macOS then marks
+  # the app "damaged" on launch. Homebrew ignores postflight xattr strips,
+  # so after installing run:
+  #   xattr -dr com.apple.quarantine /Applications/Coursework.app
+  # Remove this note once the app is signed + notarized.
 end
