@@ -8,9 +8,14 @@ cask "coursework" do
   desc "Self-paced coursework tracker with timestamped lecture notes"
   homepage "https://github.com/aspectrr/coursework-structure"
 
-  # The app is unsigned; brew's default quarantine xattr makes macOS block
-  # unsigned downloaded apps ("damaged"). --no-quarantine skips that.
-  # Install with: brew install --cask --no-quarantine aspectrr/tap/coursework
-
   app "Coursework.app"
+
+  # The app is unsigned (no Developer ID). Homebrew 6 removed --no-quarantine
+  # and always sets com.apple.quarantine, which makes macOS mark unsigned
+  # quarantined apps as "damaged" on launch. Strip it post-install so the
+  # single install command works. Remove this once the app is signed+notarized.
+  postflight do
+    system_command "/usr/bin/xattr",
+                   args: ["-dr", "com.apple.quarantine", "#{appdir}/Coursework.app"]
+  end
 end
